@@ -11,3 +11,7 @@
 .flexCenter {
   @apply flex items-center justify-center;
 }
+
+.flexStart {
+  @apply flex items-center justify-start;
+}

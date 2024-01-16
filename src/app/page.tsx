@@ -1,8 +1,6 @@
-
-export default function Home() {
+import { IoIosChatboxes } from "react-icons/io";
+export default function RootPage() {
   return (
-    <div>
-      
-    </div>
+    <div>::root::</div>
   );
 }
