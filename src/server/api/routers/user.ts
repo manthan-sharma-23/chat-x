@@ -61,6 +61,10 @@ export const userRouter = createTRPCRouter({
             password: hash,
           },
         });
+
+        return {
+          message: "Registered succesfully",
+        };
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -68,4 +72,8 @@ export const userRouter = createTRPCRouter({
         });
       }
     }),
+
+  hello: publicProcedure.query((opts) => {
+    return { hello: "hello" };
+  }),
 });

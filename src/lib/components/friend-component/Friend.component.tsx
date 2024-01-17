@@ -13,7 +13,7 @@ function Friend() {
         <div className="h-[85%] w-full"></div>
         <div className=" flexCenter h-[15%] w-full">
           <Link
-            href={""}
+            href={"/api/auth/signout"}
             className="hover:text-gradient-to-r text-2xl font-semibold transition-all duration-300 hover:from-rose-300 hover:via-rose-400 hover:to-rose-500"
           >
             Signout

@@ -5,8 +5,8 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import { GithubProfile } from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
@@ -14,24 +14,29 @@ import { db } from "@/server/db";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
-      id: string; 
+      id: string;
     } & DefaultSession["user"];
   }
 }
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: ({ session, user }) => {
+      console.log("USER", user);
+      console.log("SESSION ", session);
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+        },
+      };
+    },
   },
   adapter: PrismaAdapter(db),
   providers: [
     GithubProvider({
+      name:"github",
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
     }),
@@ -42,23 +47,40 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", placeholder: "Enter Password" },
       },
       async authorize(credentials, req) {
-        if (!credentials?.email || !credentials.password) return null;
-        const user = await db.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-        });
+        try {
+          if (!credentials?.email || !credentials.password) return null;
+          const user = await db.user.findUnique({
+            where: {
+              email: credentials.email,
+            },
+          });
 
-        if (!user) return null;
+          console.log("dbsearch ", user);
 
-        if (user.password !== credentials.password) {
-          return null;
-        } else {
+          if (!user) return null;
+
+          if (!user.password) return null;
+
+          const compare = await bcrypt.compare(
+            credentials.password,
+            user.password,
+          );
+
+          console.log(compare);
+
+          if (!compare) return null;
+
           return user;
+        } catch (error) {
+          return null;
         }
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
+  secret: env.JWT_SECRET,
 };
 
 export const getServerAuthSession = () => getServerSession(authOptions);
