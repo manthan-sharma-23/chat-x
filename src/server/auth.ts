@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", placeholder: "Enter Email" },
         password: { label: "Password", placeholder: "Enter Password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials.password) return null;
           const user = await db.user.findUnique({

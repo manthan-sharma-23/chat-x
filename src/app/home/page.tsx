@@ -1,9 +1,16 @@
 import { IoMdChatbubbles } from "react-icons/io";
+import { io } from "socket.io-client";
 import React from "react";
 import { getServerAuthSession } from "@/server/auth";
+import main from "@/chat";
 
 async function Home() {
   const session = await getServerAuthSession();
+  main();
+  const socket = io("ws://localhost:3050");
+
+  socket.emit("message", "Hey there");
+  // console.log("Socket ---> ",socket)
 
   console.log(session);
   return (
