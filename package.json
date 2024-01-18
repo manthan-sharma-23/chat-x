@@ -1,5 +1,5 @@
 {
-  "name": "chat-x",
+  "name": "chatx",
   "private": true,
   "scripts": {
     "build": "turbo build",
